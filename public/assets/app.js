@@ -20805,8 +20805,8 @@ function() {
                     (e = this.$("button.generate")).prop("disabled", !0),
                     (i = $.post( "https://www.dbdesigner.net/api/v1/schemas/" + app.schema.id + "/generate_sql.json", {
                         schema: {
-                            schema_data: JSON.stringify(app.schema.serializeForDb("mysql")),
-                            script_type: 'create'
+                            schema_data: JSON.stringify(app.schema.serializeForDb(this.db)),
+                            script_type: this.script_type
                         }
                     })).always(function() {
                     e.prop("disabled", !1);
