@@ -1,0 +1,106 @@
+{{> header }}
+{{> navegacion }}
+
+<div class="container my-4">
+  <div class="d-flex justify-content-center">
+    <button class="btn btn-primary" id="btn-guardar">
+      Nuevo
+    </button>
+  </div>
+  <form action="#" class="form-row mt-2" id="form-sala">
+    <div class="col-12 col-lg-6">
+      <label for="">Nombre</label>
+      <input type="text" placeholder="ingrese el nombre" name="nombre" class="form-control" required>
+    </div>
+    <div class="col-12 col-lg-6">
+      <label for="">Descripción</label>
+      <input type="text" placeholder="ingrese una descripción" name="descripcion" class="form-control" required>
+    </div>
+    <div class="col-12 col-lg-6">
+      <label for="">Codigo</label>
+      <input type="text" placeholder="ingrese la clave" name="codigo" class="form-control" required>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-dark" id="form-sala-btn">Guardar</button>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="container">
+  <div class="row" id="sala-item">
+    <!-- <div class="col-12 col-md-6 col-lg-4">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-header">Sala 1</div>
+          <div class="card-body">
+            <h4 class="card-title">Diagrama de Clases</h4>
+            <p class="card-text">Some quick example text to build on the card</p>
+          </div>
+          <a href="/diagramador" class="btn btn-secondary">Entrar</a>
+      </div>
+    </div> -->
+  </div>
+</div>
+{{> footer }}
+
+<script>
+  $(document).ready(()=>{
+      firebase.auth().onAuthStateChanged((usr) =>{
+        if(!usr){
+          location.href = "./login";
+        }
+      });
+      $('#btn-guardar').click( e => {
+        console.log(e);
+        $('#form-sala').toggle();
+      })
+
+      $('#form-sala-btn').click( e => {
+        console.log(e);
+        e.preventDefault();
+        var dato = $('#form-sala').serializeArray();
+
+        firebase.database().ref().child('salas').push().update({
+          nombre:dato[0].value,
+          descripcion:dato[1].value,
+          codigo:dato[2].value
+        })
+        .then(()=> {
+          console.log('Registro exitoso');
+          $('#form-sala').hide();
+          $('#form-sala')[0].reset();
+        })
+        .catch(e => console.log(e));
+      });
+
+
+      firebase.database().ref().child('salas').on('value', snap => {
+        let row = snap.val();
+        let cnt = $('#sala-item');
+        cnt.empty();
+        if( row ){
+          var html = '<div class="col-12 col-md-6 col-lg-4">\
+                        <div class="card text-white bg-info mb-3">\
+                          <div class="card-header">Sala :NUM</div>\
+                            <div class="card-body">\
+                              <h4 class="card-title">:NOMBRE</h4>\
+                              <p class="card-text">:DESCRIPCION</p>\
+                              <p class="card-text">Codigo :PASS</p>\
+                            </div>\
+                            <a href="/diagramador?id=:ID" class="btn btn-secondary">Entrar</a>\
+                        </div>\
+                      </div>';
+          var i = 1;
+          for(e in row){
+            var item = html.replace(':NUM', i);
+            item = item.replace(':NOMBRE',row[e].nombre);
+            item = item.replace(':DESCRIPCION', row[e].descripcion);
+            item = item.replace(':PASS',row[e].codigo);
+            item = item.replace(':ID',e);
+            cnt.append(item);
+            i++;
+          }
+        }
+      })
+  });
+</script>

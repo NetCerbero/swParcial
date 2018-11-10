@@ -1,0 +1,64 @@
+    
+    
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+  <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase.js"></script>
+  <script>
+  		$(document).ready(()=>{
+  			$('#cerrarSesion').hide();
+  			$('#sala').hide();
+  			$('#form-sala').hide();
+	    	var config = {
+			  apiKey: "AIzaSyB2Eiy3ZWFMbKdY__JjW_AVkPyuEDsAS3Q",
+			  authDomain: "swparcial.firebaseapp.com",
+			  databaseURL: "https://swparcial.firebaseio.com",
+			  projectId: "swparcial",
+			  storageBucket: "swparcial.appspot.com",
+			  messagingSenderId: "526134105713"
+			};
+			firebase.initializeApp(config);
+			var auth = false;
+			firebase.auth().onAuthStateChanged((usr) =>{
+				console.log(usr);
+				if( usr ){
+					auth = true;
+					$('#iniciarS').hide();
+					$('#sala').show();
+					$('#cerrarSesion').show();
+
+				}
+				console.log(auth);
+			});
+
+  			function iniciarSesion(){
+  				var usr = $('#email').val();
+  				var pass = $('#password').val();
+  				console.log(usr,pass);
+
+  				firebase.auth().signInWithEmailAndPassword(usr,pass)
+  					.then(()=>{
+  						$('#sala').show();
+  						location.href = "./room";
+  					})
+  					.catch( e =>console.log(e));
+  			}
+
+			$('#iniciarSesion').click( e => {
+				iniciarSesion();
+				e.preventDefault();
+				console.log(e);
+			})
+
+			$('#cerrarSesion').click( e => {
+				firebase.auth().signOut();
+				// $('#iniciarSesion').hide();
+				// $('#sala').show();
+				// $('#cerrarSesion').show();
+				console.log(e);
+				location.href = "./";
+			})
+  		});
+  </script>
+</html>
