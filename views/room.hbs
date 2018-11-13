@@ -63,7 +63,11 @@
         firebase.database().ref().child('salas').push().update({
           nombre:dato[0].value,
           descripcion:dato[1].value,
-          codigo:dato[2].value
+          codigo:dato[2].value,
+          tablas:{
+            db:"nombrebd",
+            title:"titulodb"
+          }
         })
         .then(()=> {
           console.log('Registro exitoso');

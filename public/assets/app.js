@@ -11854,7 +11854,7 @@ function() {
                         return app.addCommand(Command.prototype.TABLE_CREATE, {
                             top: $("div.canvas-container").scrollTop() + 10,
                             left: $("div.canvas-container").scrollLeft() + 10
-                        })
+                        })//,enviarDatos()
                     }
                 }), this.vent.on({
                     "menu-item-insert-note": function() {
@@ -18206,7 +18206,7 @@ function() {
             }, t.prototype.description = function() {
                 return "Table changed"
             }, t
-        }(this.Command)
+        }(this.Command);
     }.call(this),
     function() {
         var i = function(e, t) {
@@ -18273,6 +18273,7 @@ function() {
             },
             s = {}.hasOwnProperty;
         this.FieldChange = function(e) {
+            console.log("cambiando campos");
             function t() {
                 return t.__super__.constructor.apply(this, arguments)
             }
@@ -18491,7 +18492,7 @@ function() {
                 }
                 alert(e.message)
             }, t.prototype.resetSchema = function(e, t) {
-                return null == e && (e = "Untitled"), null == t && (t = "generic"), this._cleanUp(), this.clear(), this.set("title", e), this.set("db", t), this.datatypes = dbdesigner.datatypes[t], this.collaborators.reset(), this.comments.reset(), this._entity_idx = 0, app.clearUndoStack(), app.router.navigate("schema/new")
+                return null == e && (e = "Untitled"), null == t && (t = "generic"), this._cleanUp(), this.clear(), this.set("title", e), this.set("db", t), this.datatypes = dbdesigner.datatypes[t], this.collaborators.reset(), this.comments.reset(), this._entity_idx = 0, app.clearUndoStack()//, app.router.navigate("schema/new")
             }, t.prototype._cleanUp = function() {
                 var e, t;
                 for (app.schemaView.canvasView.clearLines(); e = this.notes.pop();) e.destroy();
@@ -18537,7 +18538,7 @@ function() {
                     comment: s.comment,
                     idx: s.idx,
                     color: s.color
-                })).addFields(s.fields), a.get("idx") ? a.get("idx") < 1e4 && a.set("idx", this._get_entity_idx()) : a.set("idx", this._get_entity_idx()), t.push(a);
+                })).addFields(s.fields? s.fields: []), a.get("idx") ? a.get("idx") < 1e4 && a.set("idx", this._get_entity_idx()) : a.set("idx", this._get_entity_idx()), t.push(a);
                 this.tables.add(t)
             }, t.prototype.serialize = function() {
                 return this.serializeForDb(this.get("db"))
@@ -19173,7 +19174,7 @@ function() {
             }, t.prototype.setLineColor = function(e) {
                 return this.lineColor = e, this.refresh()
             }, t.prototype.refresh = function() {
-                return !0 !== app.schema.loading && (this.clearLines(), this.drawLines(), app.logger.info("Canvas refreshed")), this
+                return !0 !== app.schema.loading && (this.clearLines(), this.drawLines(), app.logger.info("Canvas refreshed")), this, enviarDatos()
             }, t.prototype.drawLines = function() {
                 return this.renderConnections()
             }, t.prototype.clearLines = function() {
@@ -19421,7 +19422,7 @@ function() {
                         pk: this.$("input.field-pk").is(":checked"),
                         fk: this.$("input.field-fk").is(":checked")
                     }
-                }, this.$("input.field-fk").is(":checked") && (e.new_state.fk_table = this.$(".field-ref-table").val(), e.new_state.fk_field = this.$(".field-ref-fields").val()), app.addCommand(Command.prototype.FIELD_CHANGE, e), this.render(), app.schemaView.canvasView.refresh(), !0
+                }, this.$("input.field-fk").is(":checked") && (e.new_state.fk_table = this.$(".field-ref-table").val(), e.new_state.fk_field = this.$(".field-ref-fields").val()), app.addCommand(Command.prototype.FIELD_CHANGE, e), this.render(), app.schemaView.canvasView.refresh(),console.log("guardando cambio editado"), !0
             }, t.prototype.onCancelClick = function() {
                 this.mode = "show", this.render(), app.schemaView.canvasView.refresh()
             }, t.prototype.onDeleteField = function(e) {
@@ -19774,7 +19775,7 @@ function() {
                     })
                 }), this
             }, n.prototype.onSpanAddField = function() {
-                return app.schemaView.bringViewToTop(this), this.$("div.operations").hide(), this.$("div.insert-panel").show(), this._hasPkField() && (this.newFieldView.$el.find("input.field-pk").attr("checked", !1), this.newFieldView.$el.find("input.field-null").attr("disabled", !1), this.newFieldView.$el.find("input.field-unique").attr("disabled", !1)), this.newFieldView.$el.find("input.field-name").focus().select()
+                return app.schemaView.bringViewToTop(this), this.$("div.operations").hide(), this.$("div.insert-panel").show(), this._hasPkField() && (this.newFieldView.$el.find("input.field-pk").attr("checked", !1), this.newFieldView.$el.find("input.field-null").attr("disabled", !1), this.newFieldView.$el.find("input.field-unique").attr("disabled", !1)), this.newFieldView.$el.find("input.field-name").focus().select(),console.log("agregando un nuevo campo")
             }, n.prototype.onCancelInsert = function() {
                 return this.$("div.operations").show(), this.$("div.insert-panel").hide()
             }, n.prototype._hasPkField = function() {

@@ -326,3 +326,27 @@ app.schema.tables.models
 
 liliana.serrate@cainco.org.bo
 Edgar.Talavera@cainco.org.bo
+
+onSavedEditTable = 19680
+savebutton = 19480
+app.schemaView.bringViewToTop(this.tableView) 19397
+17964
+
+18197
+
+app.schema.findField(6720004); 18531
+app.schema.tables.findWhere({idx:4490003})
+
+var a  = new dbdesigner.models.Table({left:45,top:44,name:"lui",comment:"sd", idx:"as", color:"ass"})
+a.addField(e);
+
+app.schema.tables.models[0].addField(e);
+var at = app.schema.findField(1810020);
+at.destroy();
+
+
+///
+11857 menu-item-insert-table => creacion de una tabla
+
+19176 refresh graficador
+19778 onSpanAddField evento que agrega el campo al diagramdaor

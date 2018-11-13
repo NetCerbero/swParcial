@@ -118,7 +118,15 @@ window.renv = 'production';
     console.log("Listo para iniciar");
   });
 </script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script> -->
+<script src="assets/comparacion.js"></script>
 <script>
+     firebase.auth().onAuthStateChanged((usr) =>{
+          if(!usr){
+            location.href = "./login";
+          }
+        });
+    var swChange = true;
     function getQueryVariable(variable) {
        var query = window.location.search.substring(1);
        var vars = query.split("&");
@@ -131,86 +139,63 @@ window.renv = 'production';
        return false;
     }
 
-    function obserbarCambios(){
-      // Select the node that will be observed for mutations
-      var targetNode = document.getElementById('contenedor-diagramador');
-
-      // Options for the observer (which mutations to observe)
-      var config = { attributes: true, childList: true, subtree: true };
-
-      // Callback function to execute when mutations are observed
-      var callback = function(mutationsList, observer) {
-          for(var mutation of mutationsList) {
-              var data = JSON.stringify(app.schema.serialize());
-              data = JSON.parse(data);
-              var id = getQueryVariable('id');
-              data.db = "Nombre bd";
-              if (mutation.type == 'childList') {
-                //mandar a firebase
-                  console.log('A child node has been added or removed.');
-                  
-                  if( id ){
-                    firebase.database().ref().child('salas').child(id).update({
-                      tablas: data
-                    });
-                  }
-                  
-                  console.log(mutation);
-              }
-              else if (mutation.type == 'attributes') {
-                //mandar a firebase cuando el nombre del atributo es id
-                if(mutation.attributeName == 'style'){
-                  if( id && data.tables.length){
-                    firebase.database().ref().child('salas').child(id).update({
-                      tablas: data
-                    });
-                  }
-                }
-                console.log('The ' + mutation.attributeName + ' attribute was modified.');
-              }
-          }
-      };
-
-      // Create an observer instance linked to the callback function
-      var observer = new MutationObserver(callback);
-
-      // Start observing the target node for configured mutations
-      observer.observe(targetNode, config);
-
-    }
-    function doSomething() {
-        firebase.auth().onAuthStateChanged((usr) =>{
-          if(!usr){
-            location.href = "./login";
-          }
-        });
-
+    function enviarDatos(){
+      if(swChange){
+        var data = JSON.stringify(app.schema.serialize().tables);
+        data = JSON.parse(data);
         var id = getQueryVariable('id');
-        if( id ){
-          console.log("Revisando la bd firebase");
-          firebase.database().ref().child('salas').child(id).on('value',snap =>{
-            let row = snap.val();
-            if( row.tablas){
-              if(row.tablas.tables){
-                // app.schema.addTables(row.tablas.tables);
-                console.log(row.tablas.tables);
-              }else{
-                console.log("no hay tablas");
-              }
-              
-              //;
-            }else{
-              console.log("No hay el atributo tabla");
-            }
-          })
-        }
-        // obserbarCambios();
+        data.db = "Nombre bd";
+        console.log("subiendo datos a firebase");
+        firebase.database().ref().child('salas').child(id).child('tablas').update({tables:data});
+      }
+    }
 
+    function mergeDatos(local, remoto){
+        // var data = Object.assign([],local,remoto)
+        // console.log("segundo aqui");
+        app.schema.resetSchema();
+        app.schema.addTables(remoto);
+        setTimeout(()=>{
+          swChange = true;
+          console.log("listo");
+        },1000);
     }
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", doSomething);
-    } else {  // `DOMContentLoaded` already fired
-        doSomething();
-    }
+
+    var id = getQueryVariable('id');
+    firebase.database().ref().child('salas').child(id).child('tablas').on('value',snap =>{
+      let row = snap.val();
+      if( row.tables){
+          var dataNew = row.tables;
+          var dataOld = JSON.stringify(app.schema.serialize());
+          dataOld = JSON.parse(dataOld).tables;
+          for( e in dataOld){
+              if(!dataOld[e].fields.length){
+                  delete dataOld[e].fields
+              }
+              // }else{
+              //   for(i in dataOld[e].fields){
+              //     if(!dataOld[e].fields[i].order ){
+              //       delete dataOld[e].fields[i].order;
+              //     }
+              //   }
+              // }
+              if(!dataOld[e].color){
+                  delete dataOld[e].color
+              } 
+          }
+          
+          console.log(dataOld);
+          console.log(dataNew);
+          if(!equals(dataOld, dataNew) && Array.isArray(dataNew)){
+              swChange = false;
+              mergeDatos(dataOld, dataNew);
+              console.log("haciendo cambios");
+          }else{
+            console.log("esta actualizado");
+          }
+      }else{
+        console.log("No hay el atributo tables");
+      }
+    })
 </script>
 </html>
