@@ -194,6 +194,7 @@ window.renv = 'production';
             console.log("esta actualizado");
           }
       }else{
+        app.schema.resetSchema();
         console.log("No hay el atributo tables");
       }
     })
