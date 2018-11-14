@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 
 var hbs = require('hbs');
 
@@ -31,6 +33,15 @@ app.get('/diagramador',(req,res)=>{
 	res.render('diagramador');
 });
 
-app.listen(port,()=>{
+io.on('connection',function(socket){
+	socket.on('chat message', function(msg){
+		console.log("message: " + msg);
+		io.emit('chat message', msg);
+	});
+});
+
+
+
+http.listen(port,()=>{
 	console.log(`escuchando peticiones en el puerto ${port}`);
 });
